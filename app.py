@@ -15,27 +15,43 @@ UPLOAD_FOLDER = "uploads"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Hugging Face model repository details
-HF_REPO = "CodeSujal/Quiz_Generator"  # Your Hugging Face repo
+# Model file parts
 MODEL_FILENAME = "fine_tuned_t5_mcq_model.pth"
-TOKENIZER_DIRECTORY = "fine_tuned_t5_mcq_tokenizer"
+MODEL_PARTS = [
+    f"{MODEL_FILENAME}.part1",
+    f"{MODEL_FILENAME}.part2",
+    f"{MODEL_FILENAME}.part3"
+]
+
+MERGED_MODEL_PATH = os.path.join(UPLOAD_FOLDER, MODEL_FILENAME)
+
+# Function to merge model parts
+def merge_model_parts():
+    if os.path.exists(MERGED_MODEL_PATH):
+        print("✅ Merged model already exists. Skipping merge.")
+        return  # Skip if already merged
+
+    print("🔄 Merging model parts...")
+    with open(MERGED_MODEL_PATH, "wb") as merged_file:
+        for part in MODEL_PARTS:
+            if not os.path.exists(part):
+                raise FileNotFoundError(f"❌ Missing part: {part}")
+            with open(part, "rb") as part_file:
+                merged_file.write(part_file.read())
+    print("✅ Model merged successfully!")
+
+# Merge model parts before loading
+merge_model_parts()
 
 # Load tokenizer from Hugging Face
+TOKENIZER_DIRECTORY = "fine_tuned_t5_mcq_tokenizer"
 t5_tokenizer = T5Tokenizer.from_pretrained(TOKENIZER_DIRECTORY)
 
-# Fetch model from Hugging Face dynamically
-model_url = f"https://huggingface.co/{HF_REPO}/resolve/main/{MODEL_FILENAME}"
-print("⏳ Downloading model from Hugging Face...")
-
-response = requests.get(model_url, stream=True)
-response.raise_for_status()
-
-# Load model from memory
-model_buffer = BytesIO(response.content)
+# Load model from a merged file
+print("⏳ Loading merged model...")
 t5_model = T5ForConditionalGeneration.from_pretrained("t5-small")  # Ensure correct base model
-t5_model.load_state_dict(torch.load(model_buffer, map_location=torch.device('cpu')))
+t5_model.load_state_dict(torch.load(MERGED_MODEL_PATH, map_location=torch.device('cpu')))
 t5_model.eval()
-
 print("✅ Model loaded successfully!")
 
 # Function to extract text from a PDF file
@@ -212,6 +228,5 @@ def game_over():
         skipped=session.get('skipped', 0)
     )
 
-# Run the Flask app
 if __name__ == "__main__":
     app.run(debug=True)
