@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        function selectOption(button, selectedOption, correctAnswer) {
+            // Disable all buttons after selection
+            let buttons = document.querySelectorAll(".option-button");
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Highlight the selected option
+            if (selectedOption === correctAnswer) {
+                button.classList.add("correct");
+            } else {
+                button.classList.add("wrong");
+
+                // Highlight the correct answer
+                buttons.forEach(btn => {
+                    if (btn.textContent.trim() === correctAnswer) {
+                        btn.classList.add("correct");
+                    }
+                });
+            }
+
+            // Store the selected answer in the hidden input
+            document.getElementById("selected_option").value = selectedOption;
+
+            // Enable submit button
+            document.getElementById("submit-button").disabled = false;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Game</h1>
+        <p>Score: <strong>{{ session.get('score', 0) }}</strong></p> <!-- ✅ Ensures score updates dynamically -->
+
+        <!-- Display question -->
+        <div class="question">
+            <h2>{{ question.question }}</h2>
+        </div>
+
+        <!-- Display options as buttons -->
+        <form id="quiz-form" action="/submit_answer" method="POST">
+            {% for option in question.options %}
+            <button type="button" class="option-button" onclick="selectOption(this, '{{ option }}', '{{ question.correct_answer }}')">
+                {{ option }}
+            </button>
+            {% endfor %}
+
+            <!-- Hidden input to store the selected answer -->
+            <input type="hidden" name="selected_option" id="selected_option">
+
+            <div class="navigation-buttons">
+                {% if question_index > 0 %}
+                    <button type="submit" name="action" value="previous" class="prev-button">Previous</button>
+                {% endif %}
+                <button type="submit" id="submit-button" name="action" value="submit" class="submit-button" disabled>Submit</button>
+                <button type="submit" name="action" value="next" class="next-button">Skip</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Leaderboard -->
+    {% if show_leaderboard %}
+    <div class="leaderboard">
+        <h2>Leaderboard</h2>
+        <p>Total Questions Attempted: {{ attempted }}</p>
+        <p>Total Questions Skipped: {{ skipped }}</p>
+        <p>Final Score: <strong>{{ session.get('score', 0) }}</strong></p> <!-- ✅ Ensures final score updates -->
+    </div>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,257 @@
+/* General Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container for the quiz */
+.container {
+    width: 50%;
+    max-width: 600px;
+    margin: 50px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    min-height: 450px;
+}
+
+/* Headings */
+h1 {
+    color: #212529;
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+/* Quiz Question */
+.question h2 {
+    color: #343a40;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+/* Option Buttons */
+.option-button {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 18px;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-weight: 500;
+}
+
+.option-button:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.03);
+}
+
+/* Correct and wrong answer styling */
+.correct {
+    background-color: #28a745 !important;
+    color: white;
+    border: none;
+}
+
+.wrong {
+    background-color: #dc3545 !important;
+    color: white;
+    border: none;
+}
+
+/* Navigation Buttons */
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Button Styling */
+button {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+}
+
+/* Previous Button */
+.prev-button {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.prev-button:hover {
+    background-color: #e0a800;
+    transform: scale(1.05);
+}
+
+/* Next Button */
+.next-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.next-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Submit Button */
+.submit-button {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.submit-button:hover {
+    background-color: #138496;
+    transform: scale(1.05);
+}
+
+/* Leaderboard Section */
+.leaderboard {
+    width: 45%;
+    max-width: 500px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+.leaderboard h2 {
+    color: #333;
+    font-size: 22px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.leaderboard p {
+    font-size: 18px;
+    color: #444;
+    margin: 5px 0;
+    font-weight: 500;
+}
+
+/* Play Again Button */
+.play-again-button {
+    display: inline-block;
+    padding: 12px 20px;
+    font-size: 18px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.play-again-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Form Container */
+.quiz-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* File Upload */
+.file-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.file-label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.file-input {
+    padding: 10px;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Number of Questions Input */
+.question-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.question-input label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.question-input input {
+    width: 80px;
+    padding: 8px;
+    font-size: 16px;
+    text-align: center;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+}
+
+/* Start Game Button */
+.start-game-button {
+    padding: 12px 20px;
+    font-size: 18px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.start-game-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Error Message */
+.error-message {
+    color: red;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .leaderboard {
+        width: 90%;
+    }
+}

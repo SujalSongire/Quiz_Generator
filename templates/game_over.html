@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Over</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Game Over</h1>
+
+        <!-- ✅ Leaderboard Section -->
+        <div class="leaderboard">
+            <h2>Leaderboard</h2>
+            <p><strong>Total Questions:</strong> {{ total_questions }}</p>
+            <p><strong>Attempted:</strong> {{ attempted }}</p>
+            <p><strong>Skipped:</strong> {{ skipped }}</p>
+            <h2>Final Score: <strong>{{ session.get('score', 0) }}</strong></h2> <!-- ✅ Final Score Updates -->
+        </div>
+
+        <!-- Play Again Button -->
+        <a href="{{ url_for('index') }}" class="play-again-button">Play Again</a>
+    </div>
+
+</body>
+</html>
