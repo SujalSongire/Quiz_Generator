@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 import PyPDF2
 
 # Initialize Flask app
-app = Flask(__name__, template_folder="templates")
+app = Flask(_name_, template_folder="templates")
 app.secret_key = os.getenv('SECRET_KEY', 'default_secret_key')
 
 UPLOAD_FOLDER = "uploads"
@@ -18,17 +18,20 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # Hugging Face model repository details
 HF_REPO = "CodeSujal/Quiz_Generator"  # Your Hugging Face repo
 MODEL_FILENAME = "fine_tuned_t5_mcq_model.pth"
+MODEL_URL = f"https://huggingface.co/{HF_REPO}/resolve/main/{MODEL_FILENAME}"
 
 # Load tokenizer from local directory
 t5_tokenizer = T5Tokenizer.from_pretrained("fine_tuned_t5_mcq_tokenizer")
 
-# Fetch and load the model from Hugging Face dynamically
-model_url = f"https://huggingface.co/{HF_REPO}/resolve/main/{MODEL_FILENAME}"
-print("⏳ Downloading model from Hugging Face...")
+# Stream model file from Hugging Face without saving it to disk
+print("⏳ Loading model from Hugging Face without saving...")
+response = requests.get(MODEL_URL, stream=True)
+response.raise_for_status()
 
+# Load model directly from memory
+model_buffer = BytesIO(response.content)
 t5_model = T5ForConditionalGeneration.from_pretrained("t5-small")  # Ensure correct base model
-state_dict = torch.hub.load_state_dict_from_url(model_url, map_location=torch.device('cpu'), progress=True)
-t5_model.load_state_dict(state_dict)
+t5_model.load_state_dict(torch.load(model_buffer, map_location=torch.device('cpu')))
 t5_model.eval()
 
 print("✅ Model loaded successfully!")
@@ -84,7 +87,7 @@ def parse_and_format_mcq_with_options(mcq):
     try:
         parts = mcq.split("Correct:")
         if len(parts) < 2:
-            return None  
+            return None
 
         question_part = parts[0].strip()
         correct_answer = parts[1].strip()
@@ -95,7 +98,7 @@ def parse_and_format_mcq_with_options(mcq):
             options = [opt.strip() for opt in options_section.split(".") if opt.strip()]
 
         if len(options) != 4 or not correct_answer:
-            return None  
+            return None
 
         correct_option = next((opt for opt in options if correct_answer in opt), correct_answer)
 
@@ -160,6 +163,43 @@ def quiz():
         feedback=feedback
     )
 
+@app.route('/submit_answer', methods=['POST'])
+def submit_answer():
+    selected_option = request.form.get('selected_option')
+    action = request.form.get("action")
+    quizzes = session.get('quizzes', [])
+    current_question = session.get('current_question', 0)
+
+    if action == "previous" and current_question > 0:
+        session['current_question'] -= 1
+        return redirect(url_for('quiz'))
+
+    if current_question >= len(quizzes):
+        return redirect(url_for('game_over'))
+
+    question = quizzes[current_question]
+    correct_answer = question['correct_answer']
+
+    if action == "next":
+        session['skipped'] += 1
+        session['current_question'] += 1
+        return redirect(url_for('quiz'))
+
+    if selected_option:
+        session['attempted'] += 1
+        if selected_option.strip().lower() == correct_answer.strip().lower():
+            session['score'] += 1
+            feedback = "Correct!"
+        else:
+            feedback = f"Wrong! The correct answer is: {correct_answer}"
+    else:
+        feedback = "You skipped this question."
+
+    session['current_question'] += 1
+    session['feedback'] = feedback
+
+    return redirect(url_for('quiz'))
+
 @app.route('/game_over')
 def game_over():
     return render_template(
@@ -171,5 +211,5 @@ def game_over():
     )
 
 # Run the Flask app
-if __name__ == "__main__":
+if _name_ == "_main_":
     app.run(debug=True)
