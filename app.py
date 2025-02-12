@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 import PyPDF2
 
 # Initialize Flask app
-app = Flask(_name_, template_folder="templates")
+app = Flask(__name__, template_folder="templates")
 app.secret_key = os.getenv('SECRET_KEY', 'default_secret_key')
 
 UPLOAD_FOLDER = "uploads"
@@ -211,5 +211,5 @@ def game_over():
     )
 
 # Run the Flask app
-if _name_ == "_main_":
+if __name__ == "_main_":
     app.run(debug=True)
